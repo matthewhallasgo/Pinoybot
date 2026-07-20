@@ -26,34 +26,43 @@ def train_and_save():
             'labels': group['answer'].tolist()
         }
 
-    draw_box(["Extracting features..."])
-    X_all, y_all = [], []
-    for sid, data in sentences_map.items():
-        for i in range(len(data['tokens'])):
-            X_all.append(extract_features(data['tokens'], i))
-            y_all.append(data['labels'][i])
-
     draw_box(["Splitting dataset (70-15-15)..."])
-    X_train_dicts, X_temp_dicts, y_train, y_temp = train_test_split(
-        X_all, y_all, test_size=0.3, random_state=42, stratify=y_all
-    )
-    X_val_dicts, X_test_dicts, y_val, y_test = train_test_split(
-        X_temp_dicts, y_temp, test_size=0.5, random_state=42, stratify=y_temp
-    )
+    sids = list(sentences_map.keys())
+    sids_train, sids_temp = train_test_split(sids, test_size=0.3, random_state=42)
+    sids_val, sids_test = train_test_split(sids_temp, test_size=0.5, random_state=42)
+
+    draw_box(["Extracting features..."])
+    def build_xy(sid_list):
+        X, y = [], []
+        for sid in sid_list:
+            data = sentences_map[sid]
+            for i in range(len(data['tokens'])):
+                X.append(extract_features(data['tokens'], i))
+                y.append(data['labels'][i])
+        return X, y
+
+    X_train_dicts, y_train = build_xy(sids_train)
+    X_val_dicts, y_val = build_xy(sids_val)
+    X_test_dicts, y_test = build_xy(sids_test)
 
     vectorizer = DictVectorizer(sparse=True)
     X_train = vectorizer.fit_transform(X_train_dicts)
+    X_val = vectorizer.transform(X_val_dicts)
     X_test = vectorizer.transform(X_test_dicts)
 
     draw_box(["Training Decision Tree Classifier..."])
     clf = DecisionTreeClassifier(max_depth=30, min_samples_split=5, random_state=42)
     clf.fit(X_train, y_train)
 
+    draw_box(["Evaluating Model on Validation Set..."])
+    y_pred_val = clf.predict(X_val)
+    report_val = classification_report(y_val, y_pred_val)
+    print("\n" + report_val + "\n")
+
     draw_box(["Evaluating Model on Test Set..."])
     y_pred_test = clf.predict(X_test)
-    report = classification_report(y_test, y_pred_test)
-    
-    print("\n" + report + "\n")
+    report_test = classification_report(y_test, y_pred_test)
+    print("\n" + report_test + "\n")
 
     draw_box(["Saving models and maps to disk..."])
     joblib.dump(vectorizer, 'vectorizer.pkl')
