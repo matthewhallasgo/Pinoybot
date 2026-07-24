@@ -27,7 +27,7 @@ def extract_features(tokens, index):
         'word.suffix_3': word_lower[-3:] if len(word_lower) >= 3 else word_lower,
         'word.has_fil_prefix': any(word_lower.startswith(p) for p in ['nag', 'mag', 'pag', 'ma', 'pa', 'na', 'um', 'in', 'ka', 'ipa', 'ipag', 'ipang', 'pala', 'paki', 'mala', 'pang', 'nang', 'mang', 'pinag']),
         'word.has_fil_suffix': any(word_lower.endswith(p) for p in ['han', 'hin', 'syon', 'ilyo']),
-        'word.has_eng_prefix': any(word_lower.startswith(s) for s in ['un', 're', 'dis', 'over', 'under', 'anti', 'post', 'pre', 'non', 'sub']),
+        'word.has_eng_prefix': any(word_lower.startswith(s) for s in ['un', 're', 'dis', 'over', 'under', 'anti', 'post', 'pre', 'non', 'sub', 'wh']),
         'word.has_eng_suffix': any(word_lower.endswith(s) for s in ['ing', 'ed', 's', 'tion', 'ment', 'ity', 'ness', 'able', 'ful', 'less', 'al']),
         'word.is_single_repeated_char': is_single_repeated_char(word_lower)
     }
