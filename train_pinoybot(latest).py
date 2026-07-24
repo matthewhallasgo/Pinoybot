@@ -52,7 +52,7 @@ def train_and_save():
     X_test = vectorizer.transform(X_test_dicts)
 
     draw_box(["Training Random Forest Classifier..."])
-    # 1. Define custom weights to heavily penalize missing CS words
+    
     custom_weights = {
         'FIL': 1.0,
         'ENG': 2.0,
