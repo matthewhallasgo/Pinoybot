@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.ensemble import ExtraTreesClassifier  
 from sklearn.metrics import classification_report
-from pinoybot import extract_features, draw_box
+from pinoybot import extract_features, draw_box 
 
 def train_and_save():
     draw_box(["Loading data..."])
@@ -66,8 +66,7 @@ def train_and_save():
         min_samples_leaf=1,
         min_samples_split=2,
         criterion='entropy',
-        random_state=42,
-        n_jobs=-1
+        random_state=42
     )
     clf.fit(X_train, y_train)
 
